@@ -1,0 +1,26 @@
+{
+  "name": "gdpr-hub-lite-shopify",
+  "version": "1.0.0",
+  "description": "GDPR Hub Lite Shopify App - DSAR otomasyonu",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [
+    "shopify",
+    "gdpr",
+    "dsar",
+    "compliance"
+  ],
+  "author": "GDPR Hub Lite Team",
+  "license": "MIT",
+  "dependencies": {
+    "@shopify/shopify-api": "^7.0.0",
+    "@shopify/shopify-app-express": "^2.0.0",
+    "axios": "^1.11.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.21.2"
+  }
+}
