@@ -2,7 +2,8 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .auth import register, login, get_current_user, get_account
+from .auth import register, login, get_current_user, get_account, UserRegister, UserLogin
+from .billing import create_checkout_session, stripe_webhook, get_plans, update_subscription, CreateCheckoutSession, SubscriptionUpdate
 
 app = FastAPI(
     title="GDPR Hub Lite API",
@@ -29,11 +30,11 @@ def version():
 
 # Auth endpoints
 @app.post("/auth/register")
-async def register_endpoint(user_data: dict):
+async def register_endpoint(user_data: UserRegister):
     return await register(user_data)
 
 @app.post("/auth/login")
-async def login_endpoint(user_data: dict):
+async def login_endpoint(user_data: UserLogin):
     return await login(user_data)
 
 @app.get("/auth/me")
@@ -43,6 +44,23 @@ async def me_endpoint(user_id: str = Depends(get_current_user)):
 @app.get("/api/v1/account")
 async def account_endpoint(user_id: str = Depends(get_current_user)):
     return await get_account(user_id)
+
+# Billing endpoints
+@app.post("/billing/create-checkout-session")
+async def billing_checkout(data: CreateCheckoutSession):
+    return await create_checkout_session(data)
+
+@app.post("/billing/webhook")
+async def billing_webhook(request: dict):
+    return await stripe_webhook(request)
+
+@app.get("/billing/plans")
+async def billing_plans():
+    return await get_plans()
+
+@app.post("/billing/update-subscription")
+async def billing_update(data: SubscriptionUpdate):
+    return await update_subscription(data)
 
 # Shopify GDPR webhooks
 @app.post("/webhooks/shopify/customers/data_request")
@@ -61,7 +79,7 @@ async def shopify_sr(req: Request):
 
 # Stripe webhook (billing)
 @app.post("/webhooks/stripe")
-async def stripe_webhook(req: Request):
+async def stripe_webhook_endpoint(req: Request):
     payload = await req.body()
     # TODO: subscription status güncelle
     return PlainTextResponse("ok")

@@ -28,13 +28,13 @@ export default function HomePage() {
             <div className="flex space-x-4">
               <Link
                 href="/auth/login"
-                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-md text-sm font-medium"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
               >
                 Giriş Yap
               </Link>
               <Link
                 href="/auth/register"
-                className="bg-white hover:bg-gray-50 text-primary border border-primary px-4 py-2 rounded-md text-sm font-medium"
+                className="bg-white hover:bg-gray-50 text-blue-600 border border-blue-600 px-4 py-2 rounded-md text-sm font-medium"
               >
                 Kayıt Ol
               </Link>
@@ -48,7 +48,7 @@ export default function HomePage() {
         <div className="text-center">
           <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
             GDPR Uyumluluğu
-            <span className="text-primary"> Kolaylaştırıldı</span>
+            <span className="text-blue-600"> Kolaylaştırıldı</span>
           </h2>
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
             DSAR taleplerini otomatik olarak yönetin, GDPR uyumluluğunu sağlayın ve müşteri verilerini güvenle koruyun.
@@ -57,7 +57,7 @@ export default function HomePage() {
             <div className="rounded-md shadow">
               <Link
                 href="/auth/register"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
               >
                 Ücretsiz Başlayın
               </Link>
@@ -65,7 +65,7 @@ export default function HomePage() {
             <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
               <Link
                 href="/auth/login"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
               >
                 Demo İnceleyin
               </Link>
@@ -80,7 +80,7 @@ export default function HomePage() {
               <div className="p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                       <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -100,7 +100,7 @@ export default function HomePage() {
               <div className="p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-gdpr-600 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                       <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
@@ -139,18 +139,18 @@ export default function HomePage() {
         </div>
 
         {/* CTA Section */}
-        <div className="mt-20 bg-primary rounded-lg shadow-xl">
+        <div className="mt-20 bg-blue-600 rounded-lg shadow-xl">
           <div className="px-6 py-12 text-center">
             <h3 className="text-3xl font-extrabold text-white sm:text-4xl">
               GDPR Uyumluluğunu Kolaylaştırın
             </h3>
-            <p className="mt-4 text-lg text-primary-100">
+            <p className="mt-4 text-lg text-blue-100">
               Hemen başlayın ve DSAR taleplerinizi profesyonel bir şekilde yönetin.
             </p>
             <div className="mt-8">
               <Link
                 href="/auth/register"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50"
               >
                 Ücretsiz Hesap Oluşturun
               </Link>
@@ -164,7 +164,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-base text-gray-400">
-              &copy; 2024 GDPR Hub Lite. Tüm hakları saklıdır.
+              © 2024 GDPR Hub Lite. Tüm hakları saklıdır.
             </p>
           </div>
         </div>

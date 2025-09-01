@@ -1,22 +1,9 @@
 const express = require('express');
-const { shopifyApi, LATEST_API_VERSION } = require('@shopify/shopify-api');
 const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Shopify API configuration
-const shopify = shopifyApi({
-  apiKey: process.env.SHOPIFY_API_KEY || 'dev_key',
-  apiSecretKey: process.env.SHOPIFY_API_SECRET || 'dev_secret',
-  scopes: (process.env.SHOPIFY_SCOPES || 'read_customers,read_orders,read_products').split(','),
-  hostName: process.env.SHOPIFY_HOST || 'http://localhost:3000',
-  isEmbeddedApp: true,
-  apiVersion: LATEST_API_VERSION
-});
-
-app.use(express.json());
+const PORT = process.env.PORT || 3002;
 
 // GDPR Hub Lite Backend API
 const GDPR_API = {
@@ -109,11 +96,13 @@ app.post('/webhooks/shop/redact', async (req, res) => {
     
     const { shop_domain } = req.body;
     
-    // Handle shop redact (delete all shop data)
-    const shopRedactRequest = {
+    // Create shop erasure request in GDPR Hub Lite
+    const shopErasureRequest = {
       account_email: `${shop_domain}@shopify.com`,
-      request_type: 'shop_redact',
-      description: 'Shopify GDPR Shop Redact',
+      request_type: 'erasure',
+      subject_email: `${shop_domain}@shopify.com`,
+      subject_name: shop_domain,
+      description: 'Shopify GDPR Shop Erasure',
       additional_info: {
         shop_domain,
         source: 'shopify'
@@ -122,11 +111,11 @@ app.post('/webhooks/shop/redact', async (req, res) => {
     
     const response = await axios.post(
       `${GDPR_API.baseURL}/api/v1/requests/`,
-      shopRedactRequest,
+      shopErasureRequest,
       { headers: GDPR_API.headers }
     );
     
-    console.log('✅ Shop redact request created:', response.data);
+    console.log('✅ Shop erasure request created:', response.data);
     res.status(200).send('OK');
     
   } catch (error) {
@@ -135,10 +124,13 @@ app.post('/webhooks/shop/redact', async (req, res) => {
   }
 });
 
+// Express middleware
+app.use(express.json());
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Shopify Plugin running on port ${PORT}`);
-  console.log(`📡 GDPR Backend URL: ${GDPR_API.baseURL}`);
+  console.log(`📡 GDPR Backend: ${GDPR_API.baseURL}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/healthz`);
 });
 

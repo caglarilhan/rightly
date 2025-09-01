@@ -1,117 +1,103 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function VerifyPage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  useEffect(() => {
-    const verifyEmail = async () => {
-      const token = searchParams.get('token')
+  const handleVerify = async () => {
+    setIsLoading(true)
+    setError('')
 
+    try {
+      const token = localStorage.getItem('token')
       if (!token) {
-        setError('Geçersiz doğrulama linki')
-        setIsLoading(false)
+        router.push('/auth/login')
         return
       }
 
-      try {
-        const response = await fetch('/api/v1/auth/verify-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          setIsSuccess(true)
-          
-          // Giriş sayfasına yönlendir
-          setTimeout(() => {
-            router.push('/auth/login')
-          }, 3000)
-        } else {
-          setError(data.detail || 'Email doğrulanamadı')
+      const response = await fetch('http://127.0.0.1:9011/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      } catch (err) {
-        setError('Bir hata oluştu')
-      } finally {
-        setIsLoading(false)
+      })
+
+      if (response.ok) {
+        router.push('/dashboard')
+      } else {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        router.push('/auth/login')
       }
+    } catch (err) {
+      setError('Doğrulama hatası')
+    } finally {
+      setIsLoading(false)
     }
-
-    verifyEmail()
-  }, [searchParams, router])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">GDPR Hub Lite</h1>
-            <div className="mt-6">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-4 text-gray-600">Email doğrulanıyor...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">GDPR Hub Lite</h1>
-            <div className="mt-6">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Email doğrulandı!</h2>
-              <p className="mt-2 text-gray-600">Hesabınız başarıyla aktifleştirildi. Giriş sayfasına yönlendiriliyorsunuz...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">GDPR Hub Lite</h1>
-          <div className="mt-6">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-              <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Email Doğrulama
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Email adresinizi doğrulayın
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="text-center">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h2 className="mt-4 text-lg font-medium text-gray-900">Doğrulama başarısız</h2>
-            <p className="mt-2 text-gray-600">{error}</p>
+            <h3 className="mt-4 text-lg font-medium text-gray-900">Email doğrulama gerekli</h3>
+            <p className="mt-2 text-sm text-gray-500">
+              Email adresinize gönderilen linke tıklayarak hesabınızı doğrulayın.
+            </p>
           </div>
-        </div>
 
-        <div className="mt-8">
-          <Link
-            href="/auth/login"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-          >
-            Giriş sayfasına dön
-          </Link>
+          <div className="mt-6">
+            <button
+              onClick={handleVerify}
+              disabled={isLoading}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {isLoading ? 'Doğrulanıyor...' : 'Doğrulandı, Devam Et'}
+            </button>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link
+              href="/auth/login"
+              className="text-sm text-blue-600 hover:text-blue-500"
+            >
+              Giriş sayfasına dön
+            </Link>
+          </div>
         </div>
       </div>
     </div>
