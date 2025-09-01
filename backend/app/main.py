@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .auth import register, login, get_current_user, get_account, UserRegister, UserLogin
 from .billing import create_checkout_session, stripe_webhook, get_plans, update_subscription, CreateCheckoutSession, SubscriptionUpdate
+from .database import create_db_and_tables
+from .requests import router as requests_router
 
 app = FastAPI(
     title="GDPR Hub Lite API",
@@ -19,6 +21,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Startup event - create database tables
+@app.on_event("startup")
+async def startup_event():
+    create_db_and_tables()
 
 @app.get("/healthz") 
 def healthz(): 
@@ -44,6 +51,9 @@ async def me_endpoint(user_id: str = Depends(get_current_user)):
 @app.get("/api/v1/account")
 async def account_endpoint(user_id: str = Depends(get_current_user)):
     return await get_account(user_id)
+
+# Include requests router
+app.include_router(requests_router)
 
 # Billing endpoints
 @app.post("/billing/create-checkout-session")
