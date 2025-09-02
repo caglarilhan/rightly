@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Header } from '@/components/layout/Header'
+import { Footer } from '@/components/layout/Footer'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 
 interface DSARRequest {
@@ -80,11 +85,11 @@ export default function DashboardPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'processing': return 'bg-blue-100 text-blue-800'
-      case 'completed': return 'bg-green-100 text-green-800'
-      case 'rejected': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'pending': return 'warning'
+      case 'processing': return 'primary'
+      case 'completed': return 'success'
+      case 'rejected': return 'danger'
+      default: return 'secondary'
     }
   }
 
@@ -94,7 +99,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     )
@@ -105,149 +110,157 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+    <div className="min-h-screen bg-white">
+      <Header />
+      
+      {/* Dashboard Header */}
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">GDPR Hub Lite</h1>
-              <p className="text-gray-600">Dashboard</p>
+              <h1 className="text-3xl font-bold mb-2">Hoş Geldiniz, {user.full_name}</h1>
+              <p className="text-blue-100">{user.company_name} • {user.email}</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
+            <div className="mt-4 md:mt-0 flex items-center space-x-3">
+              <Button variant="outline" size="sm" className="border-white text-white hover:bg-white hover:text-blue-600">
+                Ayarlar
+              </Button>
+              <Button variant="secondary" size="sm" onClick={handleLogout}>
                 Çıkış Yap
-              </button>
+              </Button>
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Welcome Card */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+      {/* Dashboard Content */}
+      <section className="py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <Card>
+              <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </div>
+                  <div className="p-3 rounded-xl bg-blue-100 text-blue-600 mr-4">
+                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Hoş Geldiniz</dt>
-                      <dd className="text-lg font-medium text-gray-900">{user.full_name}</dd>
-                    </dl>
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Toplam DSAR Talebi</p>
+                    <p className="text-2xl font-bold text-gray-900">{requests.length}</p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* DSAR Requests Card */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+            <Card>
+              <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
+                  <div className="p-3 rounded-xl bg-green-100 text-green-600 mr-4">
+                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">DSAR Talepleri</dt>
-                      <dd className="text-lg font-medium text-gray-900">{requests.length}</dd>
-                    </dl>
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Tamamlanan</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {requests.filter(r => r.status === 'completed').length}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Active Sources Card */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+            <Card>
+              <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                      </svg>
-                    </div>
+                  <div className="p-3 rounded-xl bg-amber-100 text-amber-600 mr-4">
+                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Aktif Kaynaklar</dt>
-                      <dd className="text-lg font-medium text-gray-900">0</dd>
-                    </dl>
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Bekleyen</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {requests.filter(r => r.status === 'pending').length}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Quick Actions */}
-          <div className="mt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Hızlı İşlemler</h3>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Hızlı İşlemler</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button size="lg" className="w-full">
+                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
                 Yeni DSAR Talebi
-              </button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+              </Button>
+              <Button variant="outline" size="lg" className="w-full">
+                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
                 Kaynak Ekle
-              </button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+              </Button>
+              <Button variant="outline" size="lg" className="w-full">
+                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
                 Rapor İndir
-              </button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+              </Button>
+              <Button variant="outline" size="lg" className="w-full">
+                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
                 Ayarlar
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Recent Activity */}
-          <div className="mt-8">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Son Aktiviteler</h3>
-            <div className="bg-white shadow overflow-hidden sm:rounded-md">
-              {requests.length === 0 ? (
-                <div className="px-6 py-4 text-center text-gray-500">
-                  Henüz DSAR talebi yok. İlk talebinizi oluşturmak için "Yeni DSAR Talebi" butonuna tıklayın.
-                </div>
-              ) : (
-                <ul className="divide-y divide-gray-200">
-                  {requests.slice(0, 5).map((request) => (
-                    <li key={request.id} className="px-6 py-4">
-                      <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Son Aktiviteler</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle>DSAR Talepleri</CardTitle>
+                <CardDescription>Son DSAR taleplerinizin durumu</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {requests.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">📋</div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz DSAR talebi yok</h3>
+                    <p className="text-gray-600 mb-6">İlk talebinizi oluşturmak için "Yeni DSAR Talebi" butonuna tıklayın.</p>
+                    <Button>
+                      İlk Talebi Oluştur
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {requests.slice(0, 5).map((request) => (
+                      <div key={request.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0">
-                            <span className="text-2xl">{getTypeIcon(request.request_type)}</span>
-                          </div>
-                          <div className="ml-4">
-                            <div className="flex items-center">
-                              <p className="text-sm font-medium text-gray-900">
+                          <div className="text-2xl mr-4">{getTypeIcon(request.request_type)}</div>
+                          <div>
+                            <div className="flex items-center mb-1">
+                              <h4 className="font-medium text-gray-900">
                                 {request.request_type === 'access' ? 'Veri Erişim' : 
                                  request.request_type === 'deletion' ? 'Veri Silme' : 'Veri Düzeltme'}
-                              </p>
-                              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+                              </h4>
+                              <Badge variant={getStatusColor(request.status)} className="ml-2">
                                 {request.status === 'pending' && 'Bekliyor'}
                                 {request.status === 'processing' && 'İşleniyor'}
                                 {request.status === 'completed' && 'Tamamlandı'}
                                 {request.status === 'rejected' && 'Reddedildi'}
-                              </span>
+                              </Badge>
                             </div>
-                            <p className="text-sm text-gray-500">{request.subject_email}</p>
+                            <p className="text-sm text-gray-600">{request.subject_email}</p>
                             <p className="text-xs text-gray-400">
                               Oluşturulma: {new Date(request.created_at).toLocaleDateString('tr-TR')} | 
                               Son Tarih: {new Date(request.due_date).toLocaleDateString('tr-TR')}
@@ -255,22 +268,24 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900 text-sm font-medium">
+                          <Button variant="ghost" size="sm">
                             Görüntüle
-                          </button>
-                          <button className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                          </Button>
+                          <Button variant="ghost" size="sm">
                             Düzenle
-                          </button>
+                          </Button>
                         </div>
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
-      </main>
+      </section>
+
+      <Footer />
     </div>
   )
 }

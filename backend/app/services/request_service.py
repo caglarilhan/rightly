@@ -6,10 +6,16 @@ from datetime import datetime, timedelta
 import json
 import logging
 
-from app.models.request import Request, RequestStatus
-from app.models.account import Account
-from app.schemas.request import RequestCreate, RequestUpdate, RequestResponse
-from app.core.logging import log_gdpr_event
+# Legacy service file referenced non-existent modules in this codebase.
+# Keep minimal stubs or remove imports to avoid import errors.
+# Actual request logic lives under `app/requests.py` router using SQLModel models.
+
+# from app.models.request import Request, RequestStatus
+# from app.models.account import Account
+# from app.schemas.request import RequestCreate, RequestUpdate, RequestResponse
+# from app.core.logging import log_gdpr_event
+
+raise ImportError("request_service.py is not used in this codebase. Please use app/requests.py endpoints.")
 
 logger = logging.getLogger(__name__)
 

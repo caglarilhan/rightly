@@ -1,13 +1,13 @@
 from celery import Celery
-from app.core.config import settings
+from app.config import settings
 import logging
 
 # Celery app
 celery_app = Celery(
     "gdpr_hub_lite",
-    broker=settings.REDIS_URL,
-    backend=settings.REDIS_URL,
-    include=['app.tasks']
+    broker=settings.redis_url,
+    backend=settings.redis_url,
+    include=['app.tasks.export']
 )
 
 # Celery config

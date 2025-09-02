@@ -4,14 +4,14 @@ from .config import settings
 
 # Create database engine
 engine = create_engine(
-    settings.db_url,
-    echo=True if settings.env == "dev" else False,
-    pool_pre_ping=True
+    settings.database_url,
+    echo=True if settings.app_env == "dev" else False,
+    connect_args={"check_same_thread": False} if "sqlite" in settings.database_url else {}
 )
 
 # Create all tables
 def create_db_and_tables():
-    from .models import User, Account, DSARRequest, AuditLog, DataSource
+    from .models import User, Account, DSARRequest, AuditLog, DataSource, Consent, ProcessingActivity, EmailNotification, EmailSuppression, DataBreachReport, BreachEvent, DownloadToken
     SQLModel.metadata.create_all(engine)
 
 # Get database session

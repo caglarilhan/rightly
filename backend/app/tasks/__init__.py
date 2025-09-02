@@ -1,7 +1,6 @@
-from .dsar_tasks import process_dsar_request, send_dsar_notifications, cleanup_expired_requests
+# Tasks package
+from .export import export_dsar_task  # noqa: F401
 
 __all__ = [
-    "process_dsar_request",
-    "send_dsar_notifications", 
-    "cleanup_expired_requests"
+    "export_dsar_task",
 ]

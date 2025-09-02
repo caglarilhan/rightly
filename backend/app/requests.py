@@ -4,6 +4,7 @@ from typing import List
 from .models import DSARRequest, User
 from .database import get_session
 from .auth import verify_token
+from .tasks.export import export_dsar_task
 from datetime import datetime, timedelta
 import uuid
 
@@ -127,3 +128,53 @@ async def update_request(
     session.refresh(request)
     
     return {"status": "updated", "new_status": request.status}
+
+# Enqueue export job
+@router.post("/{request_id}/export")
+async def export_request(
+    request_id: str,
+    user_id: str = Depends(verify_token),
+    session: Session = Depends(get_session)
+):
+    # Check if request exists and belongs to user
+    request = session.exec(
+        select(DSARRequest).where(
+            DSARRequest.request_id == request_id,
+            DSARRequest.user_id == int(user_id)
+        )
+    ).first()
+    
+    if not request:
+        raise HTTPException(status_code=404, detail="Request not found")
+    
+    # Enqueue export task
+    try:
+        task = export_dsar_task.delay(int(request_id))
+        return {
+            "status": "queued", 
+            "request_id": request_id,
+            "task_id": task.id,
+            "message": "Export job queued successfully"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to queue export: {str(e)}")
+
+# Get request statistics
+@router.get("/stats")
+async def get_request_stats(
+    user_id: str = Depends(verify_token),
+    session: Session = Depends(get_session)
+):
+    requests = session.exec(
+        select(DSARRequest).where(DSARRequest.user_id == int(user_id))
+    ).all()
+    
+    stats = {
+        "total": len(requests),
+        "pending": len([r for r in requests if r.status == "pending"]),
+        "processing": len([r for r in requests if r.status == "processing"]),
+        "completed": len([r for r in requests if r.status == "completed"]),
+        "rejected": len([r for r in requests if r.status == "rejected"])
+    }
+    
+    return stats

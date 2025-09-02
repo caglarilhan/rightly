@@ -1,15 +1,9 @@
-from .request_service import RequestService
-from .export_service import ExportService
-from .email_service import EmailService
-from .account_service import AccountService
-from .source_service import SourceService
-from .user_service import UserService
+"""
+Lightweight services package initializer.
 
-__all__ = [
-    "RequestService",
-    "ExportService", 
-    "EmailService",
-    "AccountService",
-    "SourceService",
-    "UserService"
-]
+Avoid importing submodules here to prevent side-effect imports during package import
+(e.g., when using `from app.services import ...`). Modules can be imported lazily
+by their consumers (e.g., `from app.services.r2 import presign_get_url`).
+"""
+
+__all__ = []

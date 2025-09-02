@@ -233,29 +233,29 @@ async def billing_update(data: SubscriptionUpdate):
 # Shopify GDPR webhooks
 @app.post("/webhooks/shopify/customers/data_request")
 @limiter.limit("10/minute")
-async def shopify_dr(req: Request):
-    await guard_idempotency(req, key_header="X-Shopify-Webhook-Id")
+async def shopify_dr(request: Request):
+    await guard_idempotency(request, key_header="X-Shopify-Webhook-Id")
     # TODO: DSAR başlat
     return PlainTextResponse("ok")
 
 @app.post("/webhooks/shopify/customers/redact")
 @limiter.limit("10/minute")
-async def shopify_cr(req: Request):
-    await guard_idempotency(req, key_header="X-Shopify-Webhook-Id")
+async def shopify_cr(request: Request):
+    await guard_idempotency(request, key_header="X-Shopify-Webhook-Id")
     return PlainTextResponse("ok")
 
 @app.post("/webhooks/shopify/shop/redact")
 @limiter.limit("10/minute")
-async def shopify_sr(req: Request):
-    await guard_idempotency(req, key_header="X-Shopify-Webhook-Id")
+async def shopify_sr(request: Request):
+    await guard_idempotency(request, key_header="X-Shopify-Webhook-Id")
     return PlainTextResponse("ok")
 
 # Stripe webhook (legacy path retained)
 @app.post("/webhooks/stripe")
 @limiter.limit("20/minute")
-async def stripe_webhook_endpoint(req: Request):
-    payload = await req.body()
-    await guard_idempotency(req, body_hash=True)
+async def stripe_webhook_endpoint(request: Request):
+    payload = await request.body()
+    await guard_idempotency(request, body_hash=True)
     return PlainTextResponse("ok")
 
 # API v1 endpoints
