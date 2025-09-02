@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
+import { Header } from '../components/layout/Header'
+import { Footer } from '../components/layout/Footer'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
+import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 import Link from 'next/link'
 
 interface DSARRequest {
