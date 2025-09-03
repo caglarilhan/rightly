@@ -64,3 +64,4 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8)
 
 
+
