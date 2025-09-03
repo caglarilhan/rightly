@@ -2,290 +2,256 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Header } from '../components/layout/Header'
-import { Footer } from '../components/layout/Footer'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
-import { Badge } from '../components/ui/Badge'
-import { Button } from '../components/ui/Button'
-import Link from 'next/link'
 
-interface DSARRequest {
-  id: number
-  request_id: string
-  request_type: 'access' | 'deletion' | 'rectification'
-  status: 'pending' | 'processing' | 'completed' | 'rejected'
-  subject_email: string
-  subject_name: string
-  due_date: string
-  source: 'manual' | 'shopify' | 'woocommerce'
-  created_at: string
-}
-
-interface User {
-  id: number
-  email: string
-  full_name: string
-  company_name: string
-  is_active: boolean
-  is_verified: boolean
-}
-
-export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null)
-  const [requests, setRequests] = useState<DSARRequest[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+export default function Dashboard() {
   const router = useRouter()
+  const [user, setUser] = useState(null)
+  const [stats, setStats] = useState({
+    totalRequests: 24,
+    completedRequests: 156,
+    averageSLA: '2.3g',
+    pendingRequests: 8
+  })
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    const userData = localStorage.getItem('user')
-
-    if (!token || !userData) {
-      router.push('/auth/login')
-      return
+    if (!token) {
+      router.push('/login')
     }
-
-    // Load user data
-    try {
-      const parsedUser = JSON.parse(userData)
-      setUser(parsedUser)
-    } catch (err) {
-      router.push('/auth/login')
-      return
-    }
-
-    // Load DSAR requests
-    fetchRequests(token)
   }, [router])
 
-  const fetchRequests = async (token: string) => {
-    try {
-      const response = await fetch('http://127.0.0.1:9011/api/v1/requests/', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setRequests(data)
-      }
-    } catch (error) {
-      console.error('Error fetching requests:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    router.push('/auth/login')
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'warning'
-      case 'processing': return 'primary'
-      case 'completed': return 'success'
-      case 'rejected': return 'danger'
-      default: return 'secondary'
-    }
-  }
-
-  const getTypeIcon = (type: string) => {
-    return type === 'access' ? '📄' : type === 'deletion' ? '🗑️' : '✏️'
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
-      {/* Dashboard Header */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">Hoş Geldiniz, {user.full_name}</h1>
-              <p className="text-blue-100">{user.company_name} • {user.email}</p>
-            </div>
-            <div className="mt-4 md:mt-0 flex items-center space-x-3">
-              <Button variant="outline" size="sm" className="border-white text-white hover:bg-white hover:text-blue-600">
-                Ayarlar
-              </Button>
-              <Button variant="secondary" size="sm" onClick={handleLogout}>
-                Çıkış Yap
-              </Button>
+    <div className="min-h-screen bg-brand-navy">
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-navy/90 backdrop-blur">
+        <div className="container flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <a href="/" className="flex items-center gap-2">
+              <img src="/brand/logo-light.svg" alt="Rightly Compliance" className="h-7" />
+            </a>
+            <nav className="hidden md:flex items-center gap-6 text-sm text-slate-200">
+              <a href="/dashboard" className="text-white font-medium">Dashboard</a>
+              <a href="/requests" className="hover:text-white transition-colors">DSAR Talepleri</a>
+              <a href="/integrations" className="hover:text-white transition-colors">Entegrasyonlar</a>
+              <a href="/exports" className="hover:text-white transition-colors">Exportlar</a>
+              <a href="/audit" className="hover:text-white transition-colors">Audit Log</a>
+            </nav>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="text-slate-200 hover:text-white transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5z" />
+              </svg>
+            </button>
+            <div className="w-8 h-8 bg-brand-gold rounded-full flex items-center justify-center text-brand-navy font-semibold text-sm">
+              R
             </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Dashboard Content */}
-      <section className="py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-xl bg-blue-100 text-blue-600 mr-4">
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Toplam DSAR Talebi</p>
-                    <p className="text-2xl font-bold text-gray-900">{requests.length}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      {/* Main Content */}
+      <main className="container px-4 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-semibold text-white mb-2">Hoş geldiniz</h1>
+          <p className="text-slate-300">DSAR taleplerinizi yönetin ve GDPR uyumluluğunuzu takip edin.</p>
+        </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-xl bg-green-100 text-green-600 mr-4">
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Tamamlanan</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {requests.filter(r => r.status === 'completed').length}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-xl bg-amber-100 text-amber-600 mr-4">
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Bekleyen</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {requests.filter(r => r.status === 'pending').length}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Stats Cards */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-400 text-sm">Toplam DSAR</p>
+                <p className="text-3xl font-bold text-white">{stats.totalRequests}</p>
+              </div>
+              <div className="w-12 h-12 bg-brand-blue/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+            </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Hızlı İşlemler</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button size="lg" className="w-full">
-                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-400 text-sm">Tamamlanan</p>
+                <p className="text-3xl font-bold text-emerald-400">{stats.completedRequests}</p>
+              </div>
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-400 text-sm">Ortalama SLA</p>
+                <p className="text-3xl font-bold text-brand-gold">{stats.averageSLA}</p>
+              </div>
+              <div className="w-12 h-12 bg-brand-gold/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-400 text-sm">Bekleyen</p>
+                <p className="text-3xl font-bold text-amber-400">{stats.pendingRequests}</p>
+              </div>
+              <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Requests */}
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-white">Son DSAR Talepleri</h2>
+              <a href="/requests" className="text-brand-blue hover:text-blue-400 text-sm transition-colors">
+                Tümünü Gör
+              </a>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-emerald-400 rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">#DSAR-2024-001</p>
+                    <p className="text-slate-400 text-sm">Ahmet Yılmaz</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-medium border border-emerald-400/30">
+                  Tamamlandı
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-brand-blue rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">#DSAR-2024-002</p>
+                    <p className="text-slate-400 text-sm">Ayşe Demir</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-brand-blue/20 text-brand-blue px-3 py-1 rounded-full font-medium border border-brand-blue/30">
+                  İşleniyor
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-amber-400 rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">#DSAR-2024-003</p>
+                    <p className="text-slate-400 text-sm">Mehmet Kaya</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full font-medium border border-amber-400/30">
+                  Beklemede
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-white">Entegrasyonlar</h2>
+              <a href="/integrations" className="text-brand-blue hover:text-blue-400 text-sm transition-colors">
+                Yönet
+              </a>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Shopify</p>
+                    <p className="text-slate-400 text-sm">mystore.myshopify.com</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-medium border border-emerald-400/30">
+                  Aktif
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">WooCommerce</p>
+                    <p className="text-slate-400 text-sm">example.com</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-slate-500/20 text-slate-400 px-3 py-1 rounded-full font-medium border border-slate-400/30">
+                  Bağlanmadı
+                </span>
+              </div>
+            </div>
+            <button className="w-full mt-4 h-10 rounded-xl border border-white/20 text-white hover:bg-white/5 transition-colors font-medium">
+              + Yeni Entegrasyon Ekle
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+          <h2 className="text-xl font-semibold text-white mb-6">Hızlı İşlemler</h2>
+          <div className="grid md:grid-cols-4 gap-4">
+            <button className="flex flex-col items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 bg-brand-blue/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Yeni DSAR Talebi
-              </Button>
-              <Button variant="outline" size="lg" className="w-full">
-                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </div>
+              <span className="text-white font-medium text-sm">Yeni DSAR</span>
+            </button>
+            <button className="flex flex-col items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Kaynak Ekle
-              </Button>
-              <Button variant="outline" size="lg" className="w-full">
-                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </div>
+              <span className="text-white font-medium text-sm">Entegrasyon</span>
+            </button>
+            <button className="flex flex-col items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Rapor İndir
-              </Button>
-              <Button variant="outline" size="lg" className="w-full">
-                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </div>
+              <span className="text-white font-medium text-sm">Export</span>
+            </button>
+            <button className="flex flex-col items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                Ayarlar
-              </Button>
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Son Aktiviteler</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle>DSAR Talepleri</CardTitle>
-                <CardDescription>Son DSAR taleplerinizin durumu</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {requests.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">📋</div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz DSAR talebi yok</h3>
-                    <p className="text-gray-600 mb-6">İlk talebinizi oluşturmak için "Yeni DSAR Talebi" butonuna tıklayın.</p>
-                    <Button>
-                      İlk Talebi Oluştur
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {requests.slice(0, 5).map((request) => (
-                      <div key={request.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                        <div className="flex items-center">
-                          <div className="text-2xl mr-4">{getTypeIcon(request.request_type)}</div>
-                          <div>
-                            <div className="flex items-center mb-1">
-                              <h4 className="font-medium text-gray-900">
-                                {request.request_type === 'access' ? 'Veri Erişim' : 
-                                 request.request_type === 'deletion' ? 'Veri Silme' : 'Veri Düzeltme'}
-                              </h4>
-                              <Badge variant={getStatusColor(request.status)} className="ml-2">
-                                {request.status === 'pending' && 'Bekliyor'}
-                                {request.status === 'processing' && 'İşleniyor'}
-                                {request.status === 'completed' && 'Tamamlandı'}
-                                {request.status === 'rejected' && 'Reddedildi'}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-gray-600">{request.subject_email}</p>
-                            <p className="text-xs text-gray-400">
-                              Oluşturulma: {new Date(request.created_at).toLocaleDateString('tr-TR')} | 
-                              Son Tarih: {new Date(request.due_date).toLocaleDateString('tr-TR')}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">
-                            Görüntüle
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            Düzenle
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              </div>
+              <span className="text-white font-medium text-sm">Rapor</span>
+            </button>
           </div>
         </div>
-      </section>
-
-      <Footer />
+      </main>
     </div>
-  )
+  );
 }
