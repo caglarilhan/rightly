@@ -30,7 +30,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <a href="/login" className="text-slate-200 hover:text-white transition-colors">Giriş</a>
             <a
-              href="/pricing"
+              href="/signup"
               className="inline-flex h-10 items-center rounded-xl bg-brand-blue px-5 font-medium text-white hover:bg-blue-800 transition-colors"
             >
               Ücretsiz Başla
@@ -54,7 +54,7 @@ export default function Home() {
               30 gün SLA takip, tek-kullanımlık güvenli export ve Shopify/Woo entegrasyonları.
             </p>
             <div className="mt-8 flex gap-3">
-              <a className="h-11 rounded-xl bg-brand-blue px-6 text-white hover:bg-blue-800 transition-colors" href="/pricing">
+              <a className="h-11 rounded-xl bg-brand-blue px-6 text-white hover:bg-blue-800 transition-colors" href="/signup">
                 Ücretsiz Başla
               </a>
               <a className="h-11 rounded-xl border border-white/20 px-6 text-slate-200 hover:bg-white/5 transition-colors" href="/security">
