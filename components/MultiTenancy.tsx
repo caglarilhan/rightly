@@ -215,17 +215,17 @@ export default function MultiTenancy() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 dark:bg-slate-900">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Building2 className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold text-slate-900">Multi-Tenancy Management</h1>
+          <Building2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Multi-Tenancy Management</h1>
         </div>
-        <p className="text-lg text-slate-600 mb-4">
+        <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">
           Manage multiple tenants with isolated data and configurations
         </p>
-        <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <span>🏢 Tenant isolation</span>
           <span>•</span>
           <span>🔒 Data security</span>
@@ -300,13 +300,15 @@ export default function MultiTenancy() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full"
+              aria-label="Search tenants"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={statusFilter === 'all' ? "default" : "outline"}
               onClick={() => setStatusFilter('all')}
               size="sm"
+              aria-label="Show all status"
             >
               All Status
             </Button>
@@ -314,6 +316,7 @@ export default function MultiTenancy() {
               variant={statusFilter === 'active' ? "default" : "outline"}
               onClick={() => setStatusFilter('active')}
               size="sm"
+              aria-label="Show active tenants"
             >
               <CheckCircle className="h-4 w-4 mr-2" />
               Active
@@ -322,6 +325,7 @@ export default function MultiTenancy() {
               variant={statusFilter === 'suspended' ? "default" : "outline"}
               onClick={() => setStatusFilter('suspended')}
               size="sm"
+              aria-label="Show suspended tenants"
             >
               <AlertTriangle className="h-4 w-4 mr-2" />
               Suspended
@@ -330,6 +334,7 @@ export default function MultiTenancy() {
               variant={statusFilter === 'pending' ? "default" : "outline"}
               onClick={() => setStatusFilter('pending')}
               size="sm"
+              aria-label="Show pending tenants"
             >
               <Activity className="h-4 w-4 mr-2" />
               Pending

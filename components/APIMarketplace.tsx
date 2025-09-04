@@ -20,7 +20,10 @@ import {
   Shield,
   DollarSign,
   Lock,
-  Unlock
+  Unlock,
+  BarChart3,
+  FileText,
+  Target
 } from "lucide-react";
 
 interface APIService {
@@ -45,6 +48,7 @@ export default function APIMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceFilter, setPriceFilter] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(false);
 
   const sampleAPIs: APIService[] = [
     {
@@ -195,22 +199,26 @@ export default function APIMarketplace() {
   };
 
   const subscribeToAPI = (apiId: string) => {
+    setIsLoading(true);
     console.log(`Subscribing to API: ${apiId}`);
-    alert('API subscription initiated!');
+    setTimeout(() => {
+      alert('API subscription initiated!');
+      setIsLoading(false);
+    }, 1000);
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 dark:bg-slate-900">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Globe className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold text-slate-900">API Marketplace</h1>
+          <Globe className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">API Marketplace</h1>
         </div>
-        <p className="text-lg text-slate-600 mb-4">
+        <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">
           Discover and integrate powerful privacy and compliance APIs
         </p>
-        <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <span>🔌 100+ APIs available</span>
           <span>•</span>
           <span>🚀 One-click integration</span>
@@ -285,9 +293,10 @@ export default function APIMarketplace() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full"
+              aria-label="Search APIs"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {categories.map((category) => {
               const Icon = category.icon;
               return (
@@ -296,6 +305,7 @@ export default function APIMarketplace() {
                   variant={selectedCategory === category.id ? "default" : "outline"}
                   onClick={() => setSelectedCategory(category.id)}
                   size="sm"
+                  aria-label={`Filter by ${category.name}`}
                 >
                   <Icon className="h-4 w-4 mr-2" />
                   {category.name}
@@ -306,11 +316,12 @@ export default function APIMarketplace() {
         </div>
         
         {/* Price Filter */}
-        <div className="flex gap-2 mt-4">
+        <div className="flex flex-wrap gap-2 mt-4">
           <Button
             variant={priceFilter === 'all' ? "default" : "outline"}
             onClick={() => setPriceFilter('all')}
             size="sm"
+            aria-label="Show all prices"
           >
             All Prices
           </Button>
@@ -318,6 +329,7 @@ export default function APIMarketplace() {
             variant={priceFilter === 'free' ? "default" : "outline"}
             onClick={() => setPriceFilter('free')}
             size="sm"
+            aria-label="Show free APIs"
           >
             <DollarSign className="h-4 w-4 mr-2" />
             Free
@@ -326,6 +338,7 @@ export default function APIMarketplace() {
             variant={priceFilter === 'paid' ? "default" : "outline"}
             onClick={() => setPriceFilter('paid')}
             size="sm"
+            aria-label="Show paid APIs"
           >
             <DollarSign className="h-4 w-4 mr-2" />
             Paid
@@ -334,6 +347,7 @@ export default function APIMarketplace() {
             variant={priceFilter === 'enterprise' ? "default" : "outline"}
             onClick={() => setPriceFilter('enterprise')}
             size="sm"
+            aria-label="Show enterprise APIs"
           >
             <DollarSign className="h-4 w-4 mr-2" />
             Enterprise
@@ -410,9 +424,10 @@ export default function APIMarketplace() {
                     onClick={() => subscribeToAPI(api.id)}
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
                     size="sm"
+                    disabled={isLoading}
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Subscribe
+                    {isLoading ? 'Subscribing...' : 'Subscribe'}
                   </Button>
                   <Button
                     variant="outline"

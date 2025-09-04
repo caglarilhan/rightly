@@ -18,7 +18,10 @@ import {
   ExternalLink,
   Zap,
   Shield,
-  Globe
+  Globe,
+  ShoppingCart,
+  MessageSquare,
+  BarChart3
 } from "lucide-react";
 
 interface Connector {
@@ -40,6 +43,7 @@ export default function ConnectorStore() {
   const [connectors, setConnectors] = useState<Connector[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const sampleConnectors: Connector[] = [
     {
@@ -170,22 +174,26 @@ export default function ConnectorStore() {
 
   const installConnector = (connectorId: string) => {
     // Simulate installation
+    setIsLoading(true);
     console.log(`Installing connector: ${connectorId}`);
-    alert('Connector installed successfully!');
+    setTimeout(() => {
+      alert('Connector installed successfully!');
+      setIsLoading(false);
+    }, 1000);
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 dark:bg-slate-900">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Store className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold text-slate-900">Connector Store</h1>
+          <Store className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Connector Store</h1>
         </div>
-        <p className="text-lg text-slate-600 mb-4">
+        <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">
           Extend Rightly's capabilities with powerful integrations
         </p>
-        <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <span>🔌 50+ connectors available</span>
           <span>•</span>
           <span>🚀 Easy one-click installation</span>
@@ -260,9 +268,10 @@ export default function ConnectorStore() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full"
+              aria-label="Search connectors"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {categories.map((category) => {
               const Icon = category.icon;
               return (
@@ -271,6 +280,7 @@ export default function ConnectorStore() {
                   variant={selectedCategory === category.id ? "default" : "outline"}
                   onClick={() => setSelectedCategory(category.id)}
                   size="sm"
+                  aria-label={`Filter by ${category.name}`}
                 >
                   <Icon className="h-4 w-4 mr-2" />
                   {category.name}
@@ -346,9 +356,10 @@ export default function ConnectorStore() {
                     onClick={() => installConnector(connector.id)}
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
                     size="sm"
+                    disabled={isLoading}
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Install
+                    {isLoading ? 'Installing...' : 'Install'}
                   </Button>
                   <Button
                     variant="outline"

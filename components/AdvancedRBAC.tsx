@@ -31,7 +31,7 @@ interface Role {
   id: string;
   name: string;
   description: string;
-  permissions: Permission[];
+  permissions: string[];
   users: number;
   isSystem: boolean;
   createdAt: string;
@@ -257,17 +257,17 @@ export default function AdvancedRBAC() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 dark:bg-slate-900">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Shield className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold text-slate-900">Advanced RBAC</h1>
+          <Shield className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Advanced RBAC</h1>
         </div>
-        <p className="text-lg text-slate-600 mb-4">
+        <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">
           Granular role-based access control with fine-grained permissions
         </p>
-        <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <span>🔐 Granular permissions</span>
           <span>•</span>
           <span>👥 Role management</span>
