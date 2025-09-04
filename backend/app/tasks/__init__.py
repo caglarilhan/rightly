@@ -1,6 +1,8 @@
-# Tasks package
-from .export import export_dsar_task  # noqa: F401
+# Tasks package aggregator
+from .ops import discover, package, erase  # noqa: F401
 
 __all__ = [
-    "export_dsar_task",
+    "discover",
+    "package",
+    "erase",
 ]

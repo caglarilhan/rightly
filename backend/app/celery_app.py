@@ -1,3 +1,30 @@
+import os
+from celery import Celery
+
+REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")
+celery_app = Celery("gdprhub", broker=REDIS_URL, backend=REDIS_URL)
+
+celery_app.conf.update(
+	task_default_queue="celery",
+	task_routes={"app.tasks.*": {"queue": "default"}},
+	broker_transport_options={"visibility_timeout": 3600},
+	broker_connection_retry_on_startup=True,
+	worker_send_task_events=True,
+	task_send_sent_event=True,
+    include=["app.tasks.ops"],
+)
+
+# Optional: autodiscover within app.tasks
+try:
+    celery_app.autodiscover_tasks(["app.tasks"])
+except Exception:
+    pass
+
+# Optional eager mode for local debugging: set CELERY_EAGER=1
+if os.getenv("CELERY_EAGER") == "1":
+    celery_app.conf.task_always_eager = True
+    celery_app.conf.task_eager_propagates = True
+
 from celery import Celery
 from app.config import settings
 import logging

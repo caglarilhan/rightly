@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request, Depends, HTTPException
+import time
+import logging
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
@@ -7,11 +9,14 @@ from slowapi.errors import RateLimitExceeded
 from .config import settings
 from .config_guard import ensure_config
 from .auth import register, login, get_current_user, get_account, UserRegister, UserLogin
-from .billing import create_checkout_session, stripe_webhook, get_plans, update_subscription, CreateCheckoutSession, SubscriptionUpdate
+from .billing import router as billing_router
 from .database import create_db_and_tables
 from .requests import router as requests_router
+from .routes import admin as admin_router
 from .routes.breach import router as breach_router
 from .routes.downloads import router as downloads_router
+from .downloads import router as presigned_downloads_router
+from .webhooks import router as webhooks_router
 from .rate_limit import limiter
 from .middleware.idempotency import guard_idempotency
 
@@ -53,14 +58,27 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# Request logging middleware
+logger = logging.getLogger("api")
+logging.basicConfig(level=logging.INFO)
+
+# Request logging + x-request-id middleware
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    start_time = datetime.utcnow()
+    rid = request.headers.get("x-request-id") or str(uuid.uuid4())
+    start = time.perf_counter()
     response = await call_next(request)
-    process_time = (datetime.utcnow() - start_time).total_seconds()
-    
-    print(f"📡 {request.method} {request.url.path} - {response.status_code} - {process_time:.3f}s")
+    duration_ms = round((time.perf_counter() - start) * 1000)
+    logger.info(
+        "http_request",
+        extra={
+            "rid": rid,
+            "method": request.method,
+            "path": request.url.path,
+            "status": getattr(response, "status_code", "NA"),
+            "ms": duration_ms,
+        },
+    )
+    response.headers["x-request-id"] = rid
     return response
 
 # Startup event - create database tables
@@ -107,7 +125,11 @@ async def account_endpoint(user_id: str = Depends(get_current_user)):
 # Include routers
 app.include_router(requests_router)
 app.include_router(breach_router)
-app.include_router(downloads_router)
+# app.include_router(downloads_router)  # UUID endpoint - devre dışı
+app.include_router(presigned_downloads_router)  # JWT endpoint
+app.include_router(webhooks_router)
+app.include_router(billing_router)
+app.include_router(admin_router.router)  # Admin Panel v0
 
 # GDPR Compliance endpoints
 @app.get("/api/v1/compliance/consent")
@@ -207,28 +229,6 @@ async def get_notifications(user_id: str = Depends(get_current_user)):
             }
         ]
     }
-
-# Billing endpoints
-@app.post("/billing/create-checkout-session")
-async def billing_checkout(data: CreateCheckoutSession):
-    return await create_checkout_session(data)
-
-@app.post("/billing/webhook")
-@limiter.limit("20/minute")
-async def billing_webhook(request: Request):
-    # Stripe webhook
-    payload = await request.body()
-    # TODO: verify_stripe_sig(payload, request.headers.get("Stripe-Signature", ""))
-    await guard_idempotency(request, body_hash=True)
-    return PlainTextResponse("ok")
-
-@app.get("/billing/plans")
-async def billing_plans():
-    return await get_plans()
-
-@app.post("/billing/update-subscription")
-async def billing_update(data: SubscriptionUpdate):
-    return await update_subscription(data)
 
 # Shopify GDPR webhooks
 @app.post("/webhooks/shopify/customers/data_request")
