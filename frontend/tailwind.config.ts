@@ -1,7 +1,13 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  darkMode: "class",
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -11,6 +17,10 @@ const config: Config = {
           gold: "#D4AF37",
           sand: "#F8FAFC",
         },
+        "brand-navy": "#0B1220",
+        "brand-blue": "#1D4ED8",
+        "brand-gold": "#D4AF37",
+        "brand-sand": "#F8FAFC",
         ink: "#111827",
       },
       boxShadow: {

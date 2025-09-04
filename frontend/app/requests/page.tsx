@@ -63,7 +63,7 @@ export default function Requests() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-brand-blue"></div>
       </div>
     )
   }
@@ -171,7 +171,7 @@ export default function Requests() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        <button className="text-primary-600 hover:text-primary-900">
+                        <button className="text-brand-blue hover:text-blue-900">
                           View
                         </button>
                         {request.status === 'new' && (

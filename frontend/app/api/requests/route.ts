@@ -6,6 +6,12 @@ import { ensureReqId } from "@/lib/reqId";
 
 export const runtime = "nodejs";
 
+export async function GET() {
+	const res = await backend("/api/v1/requests");
+	const data = await res.json().catch(() => ({}));
+	return NextResponse.json(data as any, { status: res.status });
+}
+
 export async function POST(req: Request) {
 	const rid = ensureReqId(req);
 
@@ -15,33 +21,21 @@ export async function POST(req: Request) {
 		return NextResponse.json(j, { status: 403, headers: { "x-request-id": rid } });
 	}
 
-	const rl = await assertRateLimit(req, "auth_magic_link");
+	const rl = await assertRateLimit(req, "requests_create");
 	if (rl) {
 		const j = await rl.json();
 		return NextResponse.json(j, { status: 429, headers: { "x-request-id": rid } });
 	}
 
-	const payload = await req.json().catch(() => ({}));
-	const res = await backend("/auth/magic-link", {
+	const body = await req.json().catch(() => ({}));
+	const res = await backend("/api/v1/requests", {
 		method: "POST",
-		body: JSON.stringify(payload),
+		body: JSON.stringify(body),
 		headers: { "content-type": "application/json", "x-request-id": rid },
 	});
 	const data = await res.json().catch(() => ({}));
-	console.log(JSON.stringify({ rid, route: "api/auth/magic-link", beStatus: res.status }));
+	console.log(JSON.stringify({ rid, route: "api/requests", beStatus: res.status }));
 	return NextResponse.json(data as any, { status: res.status, headers: { "x-request-id": rid } });
 }
 
-import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  const { email } = await req.json();
-  if (!email) return NextResponse.json({ ok: false }, { status: 400 });
-
-  // TODO: Burada gerçek API'ni çağır:
-  // await fetch(process.env.NEXT_PUBLIC_API_URL + "/v1/auth/magic-link", { ... })
-
-  // sahte gecikme
-  await new Promise((r) => setTimeout(r, 600));
-  return NextResponse.json({ ok: true });
-}
