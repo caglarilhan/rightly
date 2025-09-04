@@ -1,3 +1,5 @@
+"use client";
+
 import { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
@@ -108,19 +110,19 @@ const AuditLogPage: NextPage = () => {
             <h1 className="text-3xl font-bold text-slate-900">Audit Log</h1>
             <div className="flex gap-2">
               <Button
-                variant={filter === "all" ? "default" : "outline"}
+                variant={filter === "all" ? "primary" : "outline"}
                 onClick={() => setFilter("all")}
               >
                 All Events
               </Button>
               <Button
-                variant={filter === "completed" ? "default" : "outline"}
+                variant={filter === "completed" ? "primary" : "outline"}
                 onClick={() => setFilter("completed")}
               >
                 Completed
               </Button>
               <Button
-                variant={filter === "processing" ? "default" : "outline"}
+                variant={filter === "processing" ? "primary" : "outline"}
                 onClick={() => setFilter("processing")}
               >
                 Processing

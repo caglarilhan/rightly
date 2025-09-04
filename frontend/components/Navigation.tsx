@@ -12,7 +12,8 @@ import {
   Settings,
   HelpCircle,
   Shield,
-  Download
+  Download,
+  Cloud
 } from "lucide-react";
 
 const Navigation: NextPage = () => {

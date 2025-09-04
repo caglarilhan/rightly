@@ -1,3 +1,5 @@
+"use client";
+
 import { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";

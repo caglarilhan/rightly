@@ -11,6 +11,13 @@ const SupportPage: NextPage = () => {
             Support & Help Center
           </h1>
           
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Ortalama İlk Yanıt: &lt;2 saat
+            </div>
+          </div>
+          
           <div className="grid gap-8 md:grid-cols-2">
             <Card className="p-6">
               <h2 className="text-2xl font-semibold mb-4">FAQ</h2>

@@ -101,24 +101,24 @@ const PrivacyPage: NextPage = () => {
                 <li><strong>PostHog:</strong> Analytics and monitoring</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold mb-4">8. International Transfers</h2>
+              <h2 className="text-2xl font-semibold mb-4">8. Data Processing Agreement</h2>
               <p className="text-slate-600 mb-6">
-                Your data is processed within the European Union (EU) and European Economic Area (EEA). Any international transfers comply with GDPR requirements and use appropriate safeguards.
+                For enterprise customers, we provide a comprehensive Data Processing Agreement (DPA) 
+                that outlines our data processing obligations under GDPR Article 28. 
+                <a href="/dpa" className="text-blue-600 hover:text-blue-800 underline ml-2">
+                  View DPA →
+                </a>
               </p>
 
               <h2 className="text-2xl font-semibold mb-4">9. Contact Information</h2>
-              <div className="bg-slate-50 p-4 rounded-lg mb-6">
-                <p className="text-slate-600 mb-2">
-                  <strong>Data Protection Officer:</strong><br />
-                  Email: dpo@gdpr-hub-lite.com<br />
-                  Address: [Your Business Address]
-                </p>
-                <p className="text-slate-600">
-                  <strong>General Inquiries:</strong><br />
-                  Email: privacy@gdpr-hub-lite.com<br />
-                  Response time: 48 hours
-                </p>
-              </div>
+              <p className="text-slate-600 mb-4">
+                For privacy-related inquiries and data requests:
+              </p>
+              <ul className="list-disc pl-6 text-slate-600 mb-6">
+                <li><strong>Email:</strong> <a href="mailto:privacy@rightly.com" className="text-blue-600 hover:text-blue-800">privacy@rightly.com</a></li>
+                <li><strong>Data Protection Officer:</strong> <a href="mailto:dpo@rightly.com" className="text-blue-600 hover:text-blue-800">dpo@rightly.com</a></li>
+                <li><strong>Postal Address:</strong> [Address will be provided upon request]</li>
+              </ul>
 
               <h2 className="text-2xl font-semibold mb-4">10. Changes to This Policy</h2>
               <p className="text-slate-600 mb-6">

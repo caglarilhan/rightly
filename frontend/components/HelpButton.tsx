@@ -6,7 +6,7 @@ import HelpModal from "./HelpModal";
 interface HelpButtonProps {
   className?: string;
   size?: "sm" | "md" | "lg";
-  variant?: "default" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "outline" | "ghost";
 }
 
 const HelpButton: React.FC<HelpButtonProps> = ({ 
@@ -23,7 +23,6 @@ const HelpButton: React.FC<HelpButtonProps> = ({
         variant={variant}
         onClick={() => setIsHelpOpen(true)}
         className={`${className}`}
-        title="Help"
       >
         <HelpCircle className="w-4 h-4" />
       </Button>

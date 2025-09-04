@@ -19,7 +19,7 @@ const nextConfig = {
           { key: "Permissions-Policy", value: "geolocation=()" },
           { 
             key: "Content-Security-Policy",
-            value: "default-src 'self'; img-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+            value: "default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
           },
         ],
       },
