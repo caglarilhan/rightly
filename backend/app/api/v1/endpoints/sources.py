@@ -5,7 +5,7 @@ from typing import List
 import logging
 
 from app.core.database import get_db
-from app.models.source import Source, SourceType, SourceStatus
+from app.models import Source, SourceType, SourceStatus
 from app.schemas.source import SourceCreate, SourceResponse, SourceUpdate
 from app.services.source_service import SourceService
 

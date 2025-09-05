@@ -6,9 +6,7 @@ import logging
 import json
 
 from app.core.database import AsyncSessionLocal
-from app.models.request import Request, RequestStatus
-from app.models.audit_event import AuditEvent, AuditEventType
-from app.models.export_bundle import ExportBundle
+from app.models import DSARRequest, RequestStatus
 from app.services.export_service import ExportService
 from app.services.email_service import EmailService
 from app.core.logging import log_gdpr_event

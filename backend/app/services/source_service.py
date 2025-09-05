@@ -4,8 +4,7 @@ from typing import List, Optional
 import json
 import logging
 
-from app.models.source import Source, SourceStatus
-from app.models.account import Account
+from app.models import Source, SourceStatus, Account
 from app.schemas.source import SourceCreate, SourceUpdate, SourceResponse
 
 logger = logging.getLogger(__name__)

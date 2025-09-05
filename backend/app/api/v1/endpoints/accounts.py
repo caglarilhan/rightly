@@ -5,7 +5,7 @@ from typing import List
 import logging
 
 from app.core.database import get_db
-from app.models.account import Account
+from app.models import Account
 from app.schemas.account import AccountCreate, AccountResponse, AccountUpdate
 from app.services.account_service import AccountService
 

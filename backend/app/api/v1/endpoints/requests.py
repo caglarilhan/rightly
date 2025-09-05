@@ -5,9 +5,8 @@ from typing import List
 import logging
 
 from app.core.database import get_db
-from app.models.request import Request, RequestStatus
+from app.models import DSARRequest, RequestStatus
 from app.schemas.request import RequestCreate, RequestResponse, RequestUpdate
-from app.services.request_service import RequestService
 from app.tasks.dsar_tasks import process_dsar_request
 
 router = APIRouter()

@@ -8,8 +8,7 @@ import logging
 from typing import Dict, Any
 
 from app.core.database import get_db
-from app.models.account import Account
-from app.models.request import Request as DSARRequest, RequestType
+from app.models import Account, DSARRequest, RequestType
 from app.tasks.dsar_tasks import process_dsar_request
 
 router = APIRouter()

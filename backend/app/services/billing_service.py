@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 from decimal import Decimal
 
-from app.models.billing import Plan, Subscription, Payment, SubscriptionStatus, PaymentStatus
-from app.models.user import User
+from app.models import Plan, Subscription, Payment, SubscriptionStatus, PaymentStatus, User
 from app.schemas.billing import PlanCreate, PlanUpdate, SubscriptionCreate, PaymentCreate
 from app.services.stripe_service import StripeService
 

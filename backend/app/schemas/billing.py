@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
-from app.models.billing import PlanType, SubscriptionStatus, PaymentStatus
+from app.models import PlanType, SubscriptionStatus, PaymentStatus
 
 class PlanBase(BaseModel):
     name: str

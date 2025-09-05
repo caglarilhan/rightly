@@ -3,10 +3,9 @@ import json
 import csv
 import io
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import hashlib
-from app.models.request import Request
-from app.models.export_bundle import ExportBundle, ExportFormat
+from app.models import DSARRequest, ExportBundle, ExportFormat
 from app.core.config import settings
 import boto3
 import logging
@@ -24,7 +23,7 @@ class ExportService:
             aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY
         )
     
-    async def create_export_bundle(self, request: Request, data: Dict[str, Any]) -> ExportBundle:
+    async def create_export_bundle(self, request: DSARRequest, data: Dict[str, Any]) -> Optional[str]:
         """DSAR talebi için export bundle oluştur"""
         
         # ZIP dosyası oluştur
@@ -89,7 +88,7 @@ class ExportService:
         
         return export_bundle
     
-    def _format_json_export(self, request: Request, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _format_json_export(self, request: DSARRequest, data: Dict[str, Any]) -> Dict[str, Any]:
         """JSON formatında export hazırla"""
         return {
             'request_info': {
@@ -109,7 +108,7 @@ class ExportService:
             }
         }
     
-    def _format_csv_export(self, request: Request, data: Dict[str, Any]) -> str:
+    def _format_csv_export(self, request: DSARRequest, data: Dict[str, Any]) -> str:
         """CSV formatında export hazırla"""
         output = io.StringIO()
         writer = csv.writer(output)
@@ -134,7 +133,7 @@ class ExportService:
         
         return output.getvalue()
     
-    def _generate_pdf_report(self, request: Request, data: Dict[str, Any]) -> str:
+    def _generate_pdf_report(self, request: DSARRequest, data: Dict[str, Any]) -> str:
         """PDF rapor oluştur"""
         # Basit HTML rapor (gerçek PDF için reportlab kullanılabilir)
         html_content = f"""

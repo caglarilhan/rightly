@@ -6,8 +6,7 @@ from typing import List, Optional
 import secrets
 import hashlib
 
-from app.models.user import User, UserRole
-from app.models.account import Account
+from app.models import User, UserRole, Account
 from app.schemas.user import UserCreate, UserUpdate, UserResponse
 from app.core.auth import get_password_hash, verify_password
 from app.core.email import email_service

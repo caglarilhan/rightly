@@ -1,4 +1,4 @@
-const ALLOWED = (process.env.ALLOWED_ORIGINS ?? "http://localhost:3001,http://127.0.0.1:3001")
+const ALLOWED = (process.env.ALLOWED_ORIGINS ?? "http://localhost:3001,http://127.0.0.1:3001,http://localhost:3003,http://127.0.0.1:3003")
 	.split(",")
 	.map(s => s.trim().toLowerCase());
 

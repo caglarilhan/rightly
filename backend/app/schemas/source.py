@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 
-from app.models.source import SourceType, SourceStatus
+from app.models import SourceType, SourceStatus
 
 class SourceBase(BaseModel):
     name: str

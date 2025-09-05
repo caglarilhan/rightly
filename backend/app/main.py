@@ -19,6 +19,7 @@ from .downloads import router as presigned_downloads_router
 from .webhooks import router as webhooks_router
 from .rate_limit import limiter
 from .middleware.idempotency import guard_idempotency
+from .api.v1.api import api_router
 
 app = FastAPI(
     title="GDPR Hub Lite API",
@@ -130,6 +131,7 @@ app.include_router(presigned_downloads_router)  # JWT endpoint
 app.include_router(webhooks_router)
 app.include_router(billing_router)
 app.include_router(admin_router.router)  # Admin Panel v0
+app.include_router(api_router, prefix="/api/v1")  # API v1 endpoints
 
 # GDPR Compliance endpoints
 @app.get("/api/v1/compliance/consent")

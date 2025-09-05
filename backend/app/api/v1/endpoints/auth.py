@@ -12,7 +12,7 @@ from app.core.auth import (
     verify_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES
 )
 # # from app.core.email import email_service
-from app.models.user import User, UserRole
+from app.models import User, UserRole
 from app.schemas.auth import (
     UserCreate, User as UserSchema, Token, LoginRequest, 
     MagicLinkRequest, PasswordResetRequest, PasswordResetConfirm,

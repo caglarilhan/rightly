@@ -4,6 +4,110 @@ from typing import Optional, List
 from datetime import datetime
 import uuid
 import json
+from enum import Enum
+
+# Enums
+class RequestStatus(str, Enum):
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+class RequestType(str, Enum):
+    DATA_EXPORT = "data_export"
+    DATA_DELETION = "data_deletion"
+    DATA_CORRECTION = "data_correction"
+    DATA_PORTABILITY = "data_portability"
+
+class SourceType(str, Enum):
+    SHOPIFY = "shopify"
+    WOOCOMMERCE = "woocommerce"
+    CUSTOM = "custom"
+
+class SourceStatus(str, Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    ERROR = "error"
+
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    USER = "user"
+    VIEWER = "viewer"
+
+class PlanType(str, Enum):
+    FREE = "free"
+    BASIC = "basic"
+    PRO = "pro"
+    ENTERPRISE = "enterprise"
+
+class SubscriptionStatus(str, Enum):
+    ACTIVE = "active"
+    CANCELLED = "cancelled"
+    PAST_DUE = "past_due"
+    UNPAID = "unpaid"
+
+class PaymentStatus(str, Enum):
+    PENDING = "pending"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    REFUNDED = "refunded"
+
+class ExportFormat(str, Enum):
+    JSON = "json"
+    CSV = "csv"
+    PDF = "pdf"
+    ZIP = "zip"
+
+class ExportBundle(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    request_id: int = Field(foreign_key="dsarrequest.id")
+    format: ExportFormat
+    file_path: str
+    file_size: int
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: datetime
+    download_count: int = Field(default=0)
+    max_downloads: int = Field(default=5)
+
+class Source(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    source_type: SourceType
+    connection_data: Optional[str] = Field(default=None)  # JSON string
+    status: SourceStatus = Field(default=SourceStatus.ACTIVE)
+    account_id: int = Field(foreign_key="account.id")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Plan(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    type: PlanType
+    price_monthly: float
+    price_yearly: float
+    features: Optional[str] = Field(default=None)  # JSON string
+    is_active: bool = Field(default=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Subscription(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    account_id: int = Field(foreign_key="account.id")
+    plan_id: int = Field(foreign_key="plan.id")
+    status: SubscriptionStatus
+    stripe_subscription_id: Optional[str] = None
+    current_period_start: datetime
+    current_period_end: datetime
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Payment(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    subscription_id: int = Field(foreign_key="subscription.id")
+    amount: float
+    currency: str = Field(default="usd")
+    status: PaymentStatus
+    stripe_payment_intent_id: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # User Model
 class User(SQLModel, table=True):

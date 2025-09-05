@@ -3,7 +3,7 @@ from sqlalchemy import select
 from typing import List, Optional
 import logging
 
-from app.models.account import Account
+from app.models import Account
 from app.schemas.account import AccountCreate, AccountUpdate, AccountResponse
 
 logger = logging.getLogger(__name__)

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 	}
 
 	const payload = await req.json().catch(() => ({}));
-	const res = await backend("/auth/magic-link", {
+	const res = await backend("/api/v1/auth/magic-link", {
 		method: "POST",
 		body: JSON.stringify(payload),
 		headers: { "content-type": "application/json", "x-request-id": rid },

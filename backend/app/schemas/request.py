@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 
-from app.models.request import RequestType, RequestStatus
+from app.models import RequestType, RequestStatus
 
 class RequestBase(BaseModel):
     request_type: RequestType
