@@ -48,6 +48,33 @@ class Settings(BaseSettings):
     DATA_RETENTION_DAYS: int = 30  # Export paketleri saklama süresi
     AUDIT_LOG_RETENTION_DAYS: int = 365  # Audit log saklama süresi
     
+    # vNext Compliance Features
+    BREACH_REPORTING_HOURS: int = 72  # GDPR 72 saat kuralı
+    EXPORT_JOB_TIMEOUT_MINUTES: int = 30  # Export job timeout
+    CONSENT_EVENT_RETENTION_DAYS: int = 2555  # 7 yıl (GDPR)
+    
+    # S3/R2 Storage for exports
+    S3_BUCKET: Optional[str] = None
+    S3_REGION: str = "us-east-1"
+    S3_ENDPOINT: Optional[str] = None
+    
+    # Celery
+    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
+    
+    # AI/ML (for DPIA risk scoring)
+    AI_API_KEY: Optional[str] = None
+    AI_MODEL_ENDPOINT: Optional[str] = None
+    
+    # Multi-Region Compliance
+    DEFAULT_REGION: str = "GDPR"
+    SUPPORTED_REGIONS: list = ["GDPR", "CCPA", "KVKK", "LGPD"]
+    
+    # Region-specific settings
+    GDPR_72H_DEADLINE: bool = True
+    CCPA_30_DAY_DEADLINE: bool = True
+    KVKK_72H_DEADLINE: bool = True
+    
     class Config:
         env_file = ".env"
         case_sensitive = True

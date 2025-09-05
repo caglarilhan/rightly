@@ -322,6 +322,31 @@ class ConsentEvent(SQLModel, table=True):
     extra_data: Optional[str] = Field(default=None)  # JSON string
 
 # Export Bundle Model
+class ExportBundle(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    organization_id: int = Field(foreign_key="organization.id", index=True)
+    
+    # Bundle details
+    bundle_type: str  # "regulator_audit", "compliance_report", "data_inventory"
+    region: str  # "GDPR", "CCPA", "KVKK", "LGPD"
+    title: str
+    description: Optional[str] = None
+    
+    # Status and file info
+    status: str = Field(default="pending")  # "pending", "processing", "completed", "failed"
+    file_path: Optional[str] = None
+    file_size: Optional[int] = None
+    download_token: Optional[str] = None
+    expires_at: Optional[datetime] = None
+    
+    # Metadata
+    created_by: Optional[int] = Field(foreign_key="user.id", default=None)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    completed_at: Optional[datetime] = None
+    
+    # Additional data
+    extra_data: Optional[str] = Field(default=None)  # JSON string
 
 # Preference Model
 class Preference(SQLModel, table=True):
@@ -419,6 +444,31 @@ class Breach(SQLModel, table=True):
     extra_data: Optional[str] = Field(default=None)  # JSON string
 
 # Export Bundle Model
+class ExportBundle(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    organization_id: int = Field(foreign_key="organization.id", index=True)
+    
+    # Bundle details
+    bundle_type: str  # "regulator_audit", "compliance_report", "data_inventory"
+    region: str  # "GDPR", "CCPA", "KVKK", "LGPD"
+    title: str
+    description: Optional[str] = None
+    
+    # Status and file info
+    status: str = Field(default="pending")  # "pending", "processing", "completed", "failed"
+    file_path: Optional[str] = None
+    file_size: Optional[int] = None
+    download_token: Optional[str] = None
+    expires_at: Optional[datetime] = None
+    
+    # Metadata
+    created_by: Optional[int] = Field(foreign_key="user.id", default=None)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    completed_at: Optional[datetime] = None
+    
+    # Additional data
+    extra_data: Optional[str] = Field(default=None)  # JSON string
 
 # Breach System Model
 class BreachSystem(SQLModel, table=True):
@@ -485,8 +535,6 @@ class DPIA(SQLModel, table=True):
     
     # Additional data
     extra_data: Optional[str] = Field(default=None)  # JSON string
-
-# Export Bundle Model
 
 # Export Bundle Model
 class ExportBundle(SQLModel, table=True):
@@ -560,6 +608,33 @@ class ROPA(SQLModel, table=True):
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Additional data
+    extra_data: Optional[str] = Field(default=None)  # JSON string
+
+# Export Bundle Model
+class ExportBundle(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    organization_id: int = Field(foreign_key="organization.id", index=True)
+    
+    # Bundle details
+    bundle_type: str  # "regulator_audit", "compliance_report", "data_inventory"
+    region: str  # "GDPR", "CCPA", "KVKK", "LGPD"
+    title: str
+    description: Optional[str] = None
+    
+    # Status and file info
+    status: str = Field(default="pending")  # "pending", "processing", "completed", "failed"
+    file_path: Optional[str] = None
+    file_size: Optional[int] = None
+    download_token: Optional[str] = None
+    expires_at: Optional[datetime] = None
+    
+    # Metadata
+    created_by: Optional[int] = Field(foreign_key="user.id", default=None)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    completed_at: Optional[datetime] = None
     
     # Additional data
     extra_data: Optional[str] = Field(default=None)  # JSON string

@@ -13,6 +13,10 @@ export function Navbar() {
     { href: "/privacy", label: "Gizlilik" },
     { href: "/security", label: "Güvenlik" },
     { href: "/support", label: "Destek" },
+    { href: "/breaches", label: "Breaches" },
+    { href: "/consents", label: "Consents" },
+    { href: "/dpia", label: "DPIA" },
+    { href: "/ropa", label: "ROPA" },
   ];
 
   const handleNavClick = (href: string, label: string) => {

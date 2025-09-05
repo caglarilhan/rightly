@@ -11,7 +11,7 @@ engine = create_engine(
 
 # Create all tables
 def create_db_and_tables():
-    from .models import User, Account, DSARRequest, AuditLog, DataSource, Consent, ProcessingActivity, EmailNotification, EmailSuppression, DataBreachReport, BreachEvent, DownloadToken
+    from app.models import User, Account, DSARRequest, AuditLog, DataSource, Consent, ProcessingActivity, EmailNotification, EmailSuppression, DataBreachReport, BreachEvent, DownloadToken
     SQLModel.metadata.create_all(engine)
 
 # Get database session

@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "../components/Footer";
 import { SeoJsonLd } from "../components/SeoJsonLd";
 import { SkipToMainContent } from "../components/SkipToMainContent";
+import QueryProvider from "@/components/QueryProvider";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -49,10 +50,12 @@ export default function RootLayout({
         }} />
       </head>
       <body className={inter.className}>
-        <SkipToMainContent />
-        <Navbar />
-        <main id="main-content">{children}</main>
-        <Footer />
+        <QueryProvider>
+          <SkipToMainContent />
+          <Navbar />
+          <main id="main-content">{children}</main>
+          <Footer />
+        </QueryProvider>
       </body>
     </html>
   );

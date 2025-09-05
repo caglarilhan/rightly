@@ -1,40 +1,85 @@
-from fastapi import HTTPException, Depends
-from sqlmodel import Session, select
-from .models import User, Account, DSARRequest
-from .database import get_session
-from .auth import verify_token
-from typing import List
+"""
+Dependencies for FastAPI application
+"""
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+from typing import Optional
+import logging
 
-# Get current user with database
-async def get_current_user_db(
-    user_id: str = Depends(verify_token),
-    session: Session = Depends(get_session)
+from app.core.database import get_db
+from app.core.auth import verify_token
+from app.core.config import settings
+from app.models import User
+
+logger = logging.getLogger(__name__)
+
+# Security schemes
+strict_security = HTTPBearer()
+optional_security = HTTPBearer(auto_error=False)
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(strict_security),
+    db: Session = Depends(get_db)
 ) -> User:
-    user = session.exec(select(User).where(User.id == int(user_id))).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+    """Get current authenticated user"""
+    try:
+        token = credentials.credentials
+        user_id = verify_token(token)
+        
+        # Get user from database
+        result = db.execute("SELECT * FROM user WHERE id = :user_id", {"user_id": user_id})
+        user_data = result.fetchone()
+        
+        if not user_data:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found"
+            )
+        
+        return User(**user_data._asdict())
+        
+    except Exception as e:
+        logger.error(f"Authentication error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
 
-# Get user account
-async def get_user_account(
-    user: User = Depends(get_current_user_db),
-    session: Session = Depends(get_session)
-) -> Account:
-    account = session.exec(select(Account).where(Account.user_id == user.id)).first()
-    if not account:
-        # Create account if doesn't exist
-        account = Account(user_id=user.id)
-        session.add(account)
-        session.commit()
-        session.refresh(account)
-    return account
+def get_current_active_user(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """Get current active user"""
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Inactive user"
+        )
+    return current_user
 
-# Get user DSAR requests
-async def get_user_requests(
-    user: User = Depends(get_current_user_db),
-    session: Session = Depends(get_session)
-) -> List[DSARRequest]:
-    requests = session.exec(
-        select(DSARRequest).where(DSARRequest.user_id == user.id)
-    ).all()
-    return requests
+def get_current_admin_user(
+    current_user: User = Depends(get_current_active_user)
+) -> User:
+    """Get current admin user"""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
+        )
+    return current_user
+
+def get_optional_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security),
+    db: Session = Depends(get_db)
+) -> Optional[User]:
+    """Return authenticated user if token provided; otherwise None. In development, endpoints may allow None."""
+    if not credentials or not credentials.credentials:
+        return None
+    try:
+        user_id = verify_token(credentials.credentials)
+        result = db.execute("SELECT * FROM user WHERE id = :user_id", {"user_id": user_id})
+        row = result.fetchone()
+        return User(**row._asdict()) if row else None
+    except Exception:
+        # If token invalid treat as anonymous
+        return None
